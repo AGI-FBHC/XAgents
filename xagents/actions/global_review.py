@@ -24,7 +24,8 @@ You will determine if the provided knowledge sufficiently addresses the question
 
 # Format example
 Your final output should ALWAYS be in the following format:
-## Result: <accept/reject>
+## Result
+<accept/reject>
 
 # Attention
 1. You MUST only output "accept" or "reject" based on the evaluation.
@@ -34,7 +35,7 @@ Your final output should ALWAYS be in the following format:
 '''
 
 OUTPUT_MAPPING = {
-    "Global Review": (str, ...)
+    "Result": (str, ...)
 }
 
 

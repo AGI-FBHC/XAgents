@@ -38,6 +38,7 @@ class BaseGPTAPI(BaseChatbot):
             message = [self._default_system_msg(), self._user_msg(msg)]
 
         rsp = await self.acompletion_text(message, stream=True)
+        print("\n")
         logger.debug(message)
         # logger.debug(rsp)
         return rsp
