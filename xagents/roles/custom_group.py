@@ -11,7 +11,7 @@ import time
 from xagents.roles import Role, ExpertGroup
 from xagents.system.logs import logger
 from xagents.system.schema import Message
-from xagents.actions import Requirement, AnalyzeTask, CalculateSimilarity, CustomAction
+from xagents.actions import Requirement, AnalyzeTask, CalculateSimilarity, CustomAction, GlobalReview
 from xagents.system.rules import RULES
 # from tasks.logs import tasklogger
 
@@ -36,6 +36,7 @@ class CustomGroup(Role):
 
         self._analyze = AnalyzeTask()
         self._calculate = CalculateSimilarity()
+        self._global = GlobalReview()
 
         self.previous_results = ''
         self.knowledge = ''
@@ -87,6 +88,17 @@ class CustomGroup(Role):
             knowledge = response.instruct_content.Answer.strip().strip('-').strip()
             # tasklogger.execution(f'## Knowledge: {knowledge}\n')
         self.knowledge = knowledge
+
+        # Perform GlobalReview to validate the knowledge
+        self._global.set_prefix(self._get_prefix(), self.profile, self._proxy, self._llm_api_key, self._serpapi_api_key)
+        review_response = await self._global.run(question=question, knowledge=knowledge)
+
+        # Check the review result
+        if 'accept' in review_response.content.lower():
+            return  # Continue with the original logic
+        elif 'reject' in review_response.content.lower():
+            logger.info(f"GlobalReview rejected the knowledge. Retrying _expert_group for question: {question}")
+            await self._expert_group(question=question)  # Retry the process
 
     async def _act(self) -> Message:
         self._set_state(0)
