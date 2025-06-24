@@ -73,3 +73,5 @@ python setup.py install
 python startup.py --question_or_task "Write an article about American culture."
 ```
 
+## A sample
+[XAgents-Case.md](XAgents-Case.md)
