@@ -9,10 +9,12 @@ from .action import Action, ActionOutput
 
 from .make_plans import MakePlans
 from .create_graph import CreateGraph
+from .optimize_graph import OptimizeGraph
 from .create_roles import CreateRoles
 
 from .analyze_task import AnalyzeTask
 from .calculate_similarity import CalculateSimilarity
+from .global_review import GlobalReview
 from .acquire_knowledge import AcquireKnowledge
 from .fusion_knowledge import FusionKnowledge
 

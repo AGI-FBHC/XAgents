@@ -8,7 +8,9 @@
 from xagents.roles import Role
 from xagents.system.logs import logger
 from xagents.system.schema import Message
-from xagents.actions import Requirement, MakePlans, CreateGraph, CreateRoles
+from xagents.actions import Requirement, MakePlans, CreateGraph, OptimizeGraph, CreateRoles
+import json
+import re
 
 
 class Manager(Role):
@@ -16,7 +18,7 @@ class Manager(Role):
                  serpapi_key=None, **kwargs):
         super().__init__(name, profile, goal, constraints, **kwargs)
 
-        self._init_actions([MakePlans, CreateGraph, CreateRoles])
+        self._init_actions([MakePlans, CreateGraph, OptimizeGraph, CreateRoles])
         self._watch([Requirement])
 
     async def _act(self) -> Message:
@@ -31,8 +33,14 @@ class Manager(Role):
 
         self._set_state(2)
         logger.info(f"{self._setting}: ready to {self._rc.todo}")
+        graph = await self._rc.todo.run(question_or_task=self._rc.important_memory[0].content,
+                                        plans=graph.content)
+        result = extract_tasks_from_graph_content(graph.content)
+
+        self._set_state(3)
+        logger.info(f"{self._setting}: ready to {self._rc.todo}")
         roles = await self._rc.todo.run(question_or_task=self._rc.important_memory[0].content,
-                                        plans=plans.instruct_content.Subtasks.strip())
+                                        plans=result)
 
         response = plans.content + graph.content + roles.content
 
@@ -46,3 +54,15 @@ class Manager(Role):
         rsp = await self._act()
         await self._publish_message(rsp)
         return rsp
+
+
+def extract_tasks_from_graph_content(graph_content):
+    json_blocks = re.findall(r'\{.*?\}', graph_content, re.DOTALL)
+    tasks = []
+    for block in json_blocks:
+        try:
+            data = json.loads(block.strip())
+            tasks.append(f"{data['number']}.{data['task']}")
+        except json.JSONDecodeError:
+            continue
+    return "\n".join(tasks)

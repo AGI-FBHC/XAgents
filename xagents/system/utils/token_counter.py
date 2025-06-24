@@ -24,6 +24,8 @@ TOKEN_COSTS = {
     "gpt-4-0613": {"prompt": 0.06, "completion": 0.12},
     "gpt-4o": {"prompt": 0.005, "completion": 0.0015},
     "text-embedding-ada-002": {"prompt": 0.0004, "completion": 0.0},
+    "deepseek-chat": {"prompt": 0.00028, "completion": 0.00112},
+    "deepseek-reasoner": {"prompt": 0.00056, "completion": 0.00224},
 }
 
 
@@ -41,7 +43,9 @@ def count_message_tokens(messages, model="gpt-3.5-turbo-0613"):
         "gpt-4-32k-0314",
         "gpt-4-0613",
         "gpt-4-32k-0613",
-        "gpt-4o"
+        "gpt-4o",
+        "deepseek-chat",
+        "deepseek-reasoner",
         }:
         tokens_per_message = 3
         tokens_per_name = 1
