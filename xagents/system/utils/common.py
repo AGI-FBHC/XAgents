@@ -39,13 +39,16 @@ class OutputParser:
         for block in blocks:
             # 如果block不为空，则继续处理
             if block.strip() != "":
-                # 将block的标题和内容分开，并分别去掉前后的空白字符
-                block_title, block_content = block.split("\n", 1)
-                # LLM可能出错，在这里做一下修正
-                if block_title[-1] == ":":
-                    block_title = block_title[:-1]
-                block_dict[block_title.strip()] = block_content.strip()
-
+                if "\n" in block:
+                    # 将block的标题和内容分开，并分别去掉前后的空白字符
+                    block_title, block_content = block.split("\n", 1)
+                    # LLM可能出错，在这里做一下修正
+                    if block_title[-1] == ":":
+                        block_title = block_title[:-1]
+                    block_dict[block_title.strip()] = block_content.strip()
+                else:
+                    # 跳过没有分隔符的块
+                    continue
         return block_dict
 
     @classmethod

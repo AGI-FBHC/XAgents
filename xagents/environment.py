@@ -74,9 +74,25 @@ class Environment(BaseModel):
             self.add_group(role)
 
     @staticmethod
+    def _extract_tasks_from_graph_content(graph_content):
+        json_blocks = re.findall(r'\{.*?\}', graph_content, re.DOTALL)
+        tasks = []
+        for block in json_blocks:
+            try:
+                data = json.loads(block.strip())
+                task_number = data.get('number')
+                task_description = data.get('task')
+                if task_number and task_description:
+                    tasks.append(f"{task_number}. {task_description}")
+            except json.JSONDecodeError:
+                continue
+        return "\n".join(tasks)
+
+    @staticmethod
     def _parser_plans(content):
         """解析子任务"""
-        plans = re.findall('## Subtasks:([\s\S]*?)##', content + "##")[0].strip().split("\n")
+        # plans = re.findall('## Subtasks:([\s\S]*?)##', content + "##")[0].strip().split("\n")
+        plans = content.split('\n')
         plans_args = []
         for plan in plans:
             plan = plan.strip()
@@ -173,7 +189,8 @@ class Environment(BaseModel):
             self.question_or_task = message.content
 
         if 'Manager' in message.role:
-            plans_args = self._parser_plans(message.content)
+            predecessor_steps_section = re.search(r'## Predecessor Steps:\s*([\s\S]*?)##', message.content + "##").group(1).strip()
+            plans_args = self._parser_plans(self._extract_tasks_from_graph_content(predecessor_steps_section))
             graph_args = self._parser_graph(message.content)
             roles_args = self._parser_roles(message.content)
             self.create_graph(plans_args=plans_args, roles_args=roles_args, graph_args=graph_args)
