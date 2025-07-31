@@ -15,6 +15,19 @@ XAgents: A Unified Framework for Multi-Agent Cooperation viaIF-THEN Rules and Mu
 </p>
 
 
+## Email Reply Case Study
+<p align="center">
+<img src="doc/png/fig.xemail.png" width=80%/> <br>
+<b>Figure 2</b>. Case study: XAgents applied to a real-world email processing task.
+</p>
+
+To further analyze the capabilities of XAgents, we applied it to real-world email processing tasks, as shown in Fig. 2. This case involves replying an email from the editor-in-chief of a film review magazine. The detailed processing flow is as follow:
+- Step 1. PA initializes an MTPG. MTPG includes a original task node, four subtask node, and a Fusion Node, as illustrated in Fig. 2.a.
+- Step 2. For each subtask, ITRDM uses DAA to initialize three domain rules. As shown in Fig. 2.b, DAA analyses the domains of the $T_1$ subtask.
+- Step 3. Based on the domain rules, the subtasks are processed from different domain perspectives, and all the results are fused by FEA in an adversarial manner to generate a unified output. This output is then matched with the global objective under the global rule.  As shown in Fig. 2.d, ITRDM conduct rule-based reasoning and decision-making for the subtask $T_1$.
+- Step 4. If it does not match, the process returns to Step 2. If a subtask fails to execute, a task path reconstruction is triggered. As shown in Fig. 2.e, the subtask $T_3$ failed, ITRDM reconstructs the task path through add new subtasks {$T_{3a}, T_{3b}, T_{3c}$}.
+- Step 5. After all subtasks are finalized, all outputs are fused at the fusion node of the MTPG to form a complete email as shown in Fig 2.f.
+
 ## Conda Enviroment Setup
 
 ``` shell
@@ -73,5 +86,8 @@ python setup.py install
 python startup.py --question_or_task "Write an article about American culture."
 ```
 
-## A sample
+## Examples
+
+### Question or Task: Write an article about American culture.
+
 [XAgents-Case.md](XAgents-Case.md)
