@@ -1,5 +1,5 @@
 <h1 align="center">
-XAgents: A Unified Framework for Multi-Agent Cooperation viaIF-THEN Rules and Multi-Polar Task Processing Graph
+XAgents: A Unified Framework for Multi-Agent Cooperation via IF-THEN Rules and Multipolar Task Processing Graph
 </h1>
 <p align="center">
 <img src="https://img.shields.io/badge/OS-Ubuntu22.4-blue" />
